@@ -41,3 +41,12 @@ target_wrapper.*
 
 # QtCreator CMake
 CMakeLists.txt.user*
+
+# Bazel
+bazel-*
+
+# IDEs
+.vscode
+
+# Random stuff
+*~
