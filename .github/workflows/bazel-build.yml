@@ -21,6 +21,9 @@ jobs:
         sudo apt install qt512base
     - name: build
       run: |
-        . /opt/qt512/bin/qt512-env.sh
         bazel build //...
-      shell: bash
+      env:
+        QT_BASE_DIR: /opt/qt512
+        QTDIR: /opt/qt512
+        PATH: /opt/qt512/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+        LD_LIBRARY_PATH: /opt/qt512/lib/x86_64-linux-gnu:/opt/qt512/lib
