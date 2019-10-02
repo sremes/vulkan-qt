@@ -17,7 +17,7 @@ jobs:
     - name: install_qt5
       run: |
         sudo apt update
-        sudo apt install -y p7zip-full
+        sudo apt install -y p7zip-full libvulkan-dev
         wget https://code.qt.io/cgit/qbs/qbs.git/plain/scripts/install-qt.sh
         chmod +x install-qt.sh
         sudo ./install-qt.sh --version 5.13.1 --directory /opt/qt qtbase
