@@ -16,15 +16,17 @@ jobs:
         sudo ./bazel-0.29.1-installer-linux-x86_64.sh
     - name: install_qt5
       run: |
-        sudo add-apt-repository ppa:beineri/opt-qt-5.12.0-bionic
         sudo apt update
-        sudo apt install qt512base
-        sudo ln -s /opt/qt512/include /usr/include/x86_64-linux-gnu/qt5
+        sudo apt install -y p7zip-full
+        wget https://code.qt.io/cgit/qbs/qbs.git/plain/scripts/install-qt.sh
+        chmod +x install-qt.sh
+        sudo ./install-qt.sh --version 5.13.1 --directory /opt/qt qtbase
+        sudo ln -s /opt/qt/5.13.1/gcc_64/include /usr/include/x86_64-linux-gnu/qt5
     - name: build
       run: |
         bazel build //...
       env:
-        QT_BASE_DIR: /opt/qt512
-        QTDIR: /opt/qt512
-        PATH: /opt/qt512/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-        LD_LIBRARY_PATH: /opt/qt512/lib/x86_64-linux-gnu:/opt/qt512/lib
+        QT_BASE_DIR: /opt/qt/5.13.1/gcc_64
+        QTDIR: /opt/qt/5.13.1/gcc_64
+        PATH: /opt/qt/5.13.1/gcc_64/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+        LD_LIBRARY_PATH: /opt/qt/5.13.1/gcc_64/lib
