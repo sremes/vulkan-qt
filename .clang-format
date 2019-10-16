@@ -1,0 +1,14 @@
+Language: Cpp
+# Defines the Google style for automatic reformatting.
+# https://google.github.io/styleguide/cppguide.html
+BasedOnStyle: Google
+# This defaults to 'Auto'. Explicitly set it, so that
+# 'vector<vector<int> >' in existing files gets formatted to
+# 'vector<vector<int>>'. ('Auto' means that clang-format will only use
+# 'int>>' if the file already contains at least one such instance.)
+Standard: Cpp11
+# Use 4 spaces for indenting, but de-indent access specifiers by 2
+IndentWidth: 4
+AccessModifierOffset: -2
+# Always break before braces
+BreakBeforeBraces: Allman

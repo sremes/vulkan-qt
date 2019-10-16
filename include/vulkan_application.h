@@ -19,7 +19,7 @@ class VulkanWindow : public QVulkanWindow
   public: 
     VulkanWindow() {}
     ~VulkanWindow() {}
-    QVulkanWindowRenderer* createRenderer() override {};
+    QVulkanWindowRenderer* createRenderer() override {}
 };
 
 class VulkanApplication : public QGuiApplication
