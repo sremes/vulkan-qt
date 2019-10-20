@@ -56,8 +56,17 @@ class VulkanApplication : public QGuiApplication
   public:
     VulkanApplication(int& argc, char**& argv) : QGuiApplication(argc, argv)
     {
-        // Enable validation layer, if supported. Messages go to qDebug by default.
-        vulkan_instance_.setLayers(QByteArrayList() << "VK_LAYER_LUNARG_standard_validation");
+        // Enable validation layer, if supported. Messages go to qDebug by
+        // default.
+        vulkan_instance_.setLayers(QByteArrayList()
+                                   << "VK_LAYER_LUNARG_standard_validation"
+                                   << "VK_LAYER_GOOGLE_threading"
+                                   << "VK_LAYER_LUNARG_parameter_validation"
+                                   << "VK_LAYER_LUNARG_object_tracker"
+                                   << "VK_LAYER_LUNARG_core_validation"
+                                   << "VK_LAYER_LUNARG_image"
+                                   << "VK_LAYER_LUNARG_swapchain"
+                                   << "VK_LAYER_GOOGLE_unique_objects");
         if (!vulkan_instance_.create())
         {
             qFatal("Failed to create vulkan instance: %d", vulkan_instance_.errorCode());
