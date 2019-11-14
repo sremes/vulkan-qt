@@ -1,6 +1,6 @@
 # WORKSPACE
 
-load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
+load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository", "new_git_repository")
 
 git_repository(
     name = "bazel_rules_qt",
@@ -15,3 +15,17 @@ new_local_repository(
     # For Qt5 on Ubuntu 16.04
     path = "/usr/include/x86_64-linux-gnu/qt5/"
 )
+
+new_git_repository(
+    name = "glm",
+    remote = "https://github.com/g-truc/glm.git",
+    branch = "master",
+    build_file = "@//:glm.BUILD",
+)
+
+git_repository(
+    name = "gtest",
+    remote = "https://github.com/google/googletest",
+    tag = "release-1.10.0",
+)
+
