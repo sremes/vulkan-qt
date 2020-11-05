@@ -11,7 +11,7 @@ git_repository(
 new_local_repository(
     name = "qt",
     build_file = "@bazel_rules_qt//:qt.BUILD",
-    #path = "/usr/include/qt", # May need configuring for your installation
+    # path = "/usr/include/qt", # May need configuring for your installation
     # For Qt5 on Ubuntu 16.04
     path = "/usr/include/x86_64-linux-gnu/qt5/"
 )

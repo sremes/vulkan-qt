@@ -4,8 +4,8 @@ load("@bazel_rules_qt//:qt.bzl", "qt_cc_library")
 
 qt_cc_library(
     name = "vulkan_application",
-    src = "src/vulkan_application.cpp",
-    hdr = "include/vulkan_application.h",
+    srcs = ["src/vulkan_application.cpp"],
+    hdrs = ["include/vulkan_application.h"],
     deps = ["@qt//:qt_gui"],
     strip_include_prefix = "include",
 )
