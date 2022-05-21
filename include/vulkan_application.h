@@ -57,7 +57,7 @@ class VulkanWindow : public QVulkanWindow
     }
 
   protected:
-    void keyPressEvent(QKeyEvent* event) override { close(); }
+    void keyPressEvent(QKeyEvent*) override { close(); }
 };
 
 class VulkanApplication : public QGuiApplication
