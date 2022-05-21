@@ -2,7 +2,7 @@
 
 VkRenderPassBeginInfo VulkanRenderer::GetRenderPassBeginInfo()
 {
-    VkRenderPassBeginInfo render_pass_info;
+    VkRenderPassBeginInfo render_pass_info{};
     render_pass_info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
     render_pass_info.renderPass = window_.defaultRenderPass();
     render_pass_info.framebuffer = window_.currentFramebuffer();

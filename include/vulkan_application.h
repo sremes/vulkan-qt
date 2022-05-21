@@ -17,8 +17,8 @@ class VulkanRenderer : public QVulkanWindowRenderer
 
     void startNextFrame() override
     {
-        auto command_buffer = window_.currentCommandBuffer();
-        auto render_pass_info = GetRenderPassBeginInfo();
+        const auto& command_buffer = window_.currentCommandBuffer();
+        const auto& render_pass_info = GetRenderPassBeginInfo();
         device_functions_->vkCmdBeginRenderPass(
             command_buffer, &render_pass_info, VK_SUBPASS_CONTENTS_INLINE);
         // @todo Draw everything here
