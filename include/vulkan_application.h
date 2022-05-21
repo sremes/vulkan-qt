@@ -45,7 +45,7 @@ class VulkanRenderer : public QVulkanWindowRenderer
     QVulkanWindow& window_;
     QVulkanDeviceFunctions* device_functions_;
 
-    const VkClearValue clear_values_{{0.0F, 0.0F, 0.0F, 1.0F}};
+    const VkClearValue clear_values_{{{0.0F, 0.0F, 0.0F, 1.0F}}};
 };
 
 class VulkanWindow : public QVulkanWindow
