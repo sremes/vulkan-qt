@@ -8,7 +8,7 @@ qt_cc_library(
     hdrs = ["include/vulkan_application.h"],
     strip_include_prefix = "include",
     deps = [
-        "@glm//:glm",
+        ":graphics",
         "@qt//:qt_gui",
     ],
 )
@@ -17,6 +17,8 @@ qt_cc_library(
 cc_library(
     name = "graphics",
     hdrs = ["include/graphics.h"],
+    srcs = ["src/graphics.cpp"],
+    strip_include_prefix = "include",
     deps = ["@glm//:glm"],
 )
 
@@ -27,4 +29,5 @@ cc_binary(
     deps = [
         ":vulkan_application",
     ],
+    data = ["//shaders"]
 )
