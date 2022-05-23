@@ -1,0 +1,2 @@
+build --color=yes
+build --cxxopt=-std=c++17
