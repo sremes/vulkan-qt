@@ -4,8 +4,8 @@ load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository", "new_git_r
 
 git_repository(
     name = "bazel_rules_qt",
-    remote = "https://github.com/justbuchanan/bazel_rules_qt.git",
     branch = "master",
+    remote = "https://github.com/justbuchanan/bazel_rules_qt.git",
 )
 
 new_local_repository(
@@ -13,14 +13,14 @@ new_local_repository(
     build_file = "@bazel_rules_qt//:qt.BUILD",
     # path = "/usr/include/qt", # May need configuring for your installation
     # For Qt5 on Ubuntu 16.04
-    path = "/usr/include/x86_64-linux-gnu/qt5/"
+    path = "/usr/include/x86_64-linux-gnu/qt5/",
 )
 
 new_git_repository(
     name = "glm",
-    remote = "https://github.com/g-truc/glm.git",
     branch = "master",
     build_file = "@//:glm.BUILD",
+    remote = "https://github.com/g-truc/glm.git",
 )
 
 git_repository(
@@ -29,3 +29,12 @@ git_repository(
     tag = "release-1.10.0",
 )
 
+git_repository(
+    name = "rules_vulkan",
+    remote = "https://github.com/jadarve/rules_vulkan.git",
+    tag = "v0.0.6",
+)
+
+load("@rules_vulkan//vulkan:repositories.bzl", "vulkan_repositories")
+
+vulkan_repositories()

@@ -16,10 +16,10 @@ qt_cc_library(
 # https://docs.bazel.build/versions/master/be/c-cpp.html#cc_library
 cc_library(
     name = "graphics",
-    hdrs = ["include/graphics.h"],
     srcs = ["src/graphics.cpp"],
+    hdrs = ["include/graphics.h"],
     strip_include_prefix = "include",
-    deps = ["@glm//:glm"],
+    deps = ["@glm"],
 )
 
 cc_binary(
@@ -29,5 +29,8 @@ cc_binary(
     deps = [
         ":vulkan_application",
     ],
-    data = ["//shaders"]
+    data = [
+        "//shaders:fragment_shader",
+        "//shaders:vertex_shader",
+    ],
 )
