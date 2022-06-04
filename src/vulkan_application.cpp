@@ -205,48 +205,46 @@ void VulkanRenderer::CreateGraphicsPipeline(
     const VkPipelineVertexInputStateCreateInfo vertex_input_info)
 {
     // Pipeline cache
-    VkPipelineCacheCreateInfo pipelineCacheInfo{};
-    pipelineCacheInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
+    VkPipelineCacheCreateInfo pipeline_cache_info{};
+    pipeline_cache_info.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
     auto err = device_functions_->vkCreatePipelineCache(
-        device, &pipelineCacheInfo, nullptr, &pipeline_cache_);
+        device, &pipeline_cache_info, nullptr, &pipeline_cache_);
     if (err != VK_SUCCESS) qFatal("Failed to create pipeline cache: %d", err);
 
     // Pipeline layout
-    VkPipelineLayoutCreateInfo pipelineLayoutInfo;
-    memset(&pipelineLayoutInfo, 0, sizeof(pipelineLayoutInfo));
-    pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-    pipelineLayoutInfo.setLayoutCount = 1;
-    pipelineLayoutInfo.pSetLayouts = &descriptor_set_layout_;
-    err = device_functions_->vkCreatePipelineLayout(device, &pipelineLayoutInfo,
-                                                    nullptr, &pipeline_layout_);
+    VkPipelineLayoutCreateInfo pipeline_layout_info;
+    memset(&pipeline_layout_info, 0, sizeof(pipeline_layout_info));
+    pipeline_layout_info.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+    pipeline_layout_info.setLayoutCount = 1;
+    pipeline_layout_info.pSetLayouts = &descriptor_set_layout_;
+    err = device_functions_->vkCreatePipelineLayout(
+        device, &pipeline_layout_info, nullptr, &pipeline_layout_);
     if (err != VK_SUCCESS) qFatal("Failed to create pipeline layout: %d", err);
 
     // Shaders
-    VkShaderModule vertShaderModule =
-        CreateShader(QStringLiteral("shaders/vertex.glsl"));
-    VkShaderModule fragShaderModule =
-        CreateShader(QStringLiteral("shaders/fragment.glsl"));
+    VkShaderModule vertex_shader =
+        CreateShader(QStringLiteral("shaders/shader.vert.spv"));
+    VkShaderModule fragment_shader =
+        CreateShader(QStringLiteral("shaders/shader.frag.spv"));
 
     // Graphics pipeline
-    VkGraphicsPipelineCreateInfo pipelineInfo;
-    memset(&pipelineInfo, 0, sizeof(pipelineInfo));
-    pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+    VkGraphicsPipelineCreateInfo pipeline_info{};
+    pipeline_info.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 
-    VkPipelineShaderStageCreateInfo shaderStages[2] = {
+    VkPipelineShaderStageCreateInfo shader_stages[2] = {
         {VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO, nullptr, 0,
-         VK_SHADER_STAGE_VERTEX_BIT, vertShaderModule, "main", nullptr},
+         VK_SHADER_STAGE_VERTEX_BIT, vertex_shader, "main", nullptr},
         {VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO, nullptr, 0,
-         VK_SHADER_STAGE_FRAGMENT_BIT, fragShaderModule, "main", nullptr}};
-    pipelineInfo.stageCount = 2;
-    pipelineInfo.pStages = shaderStages;
+         VK_SHADER_STAGE_FRAGMENT_BIT, fragment_shader, "main", nullptr}};
+    pipeline_info.stageCount = 2;
+    pipeline_info.pStages = shader_stages;
 
-    pipelineInfo.pVertexInputState = &vertex_input_info;
+    pipeline_info.pVertexInputState = &vertex_input_info;
 
-    VkPipelineInputAssemblyStateCreateInfo ia;
-    memset(&ia, 0, sizeof(ia));
+    VkPipelineInputAssemblyStateCreateInfo ia{};
     ia.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
     ia.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
-    pipelineInfo.pInputAssemblyState = &ia;
+    pipeline_info.pInputAssemblyState = &ia;
 
     // The viewport and scissor will be set dynamically via
     // vkCmdSetViewport/Scissor. This way the pipeline does not need to be
@@ -255,7 +253,7 @@ void VulkanRenderer::CreateGraphicsPipeline(
     vp.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
     vp.viewportCount = 1;
     vp.scissorCount = 1;
-    pipelineInfo.pViewportState = &vp;
+    pipeline_info.pViewportState = &vp;
 
     VkPipelineRasterizationStateCreateInfo rs{};
     rs.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
@@ -263,13 +261,13 @@ void VulkanRenderer::CreateGraphicsPipeline(
     rs.cullMode = VK_CULL_MODE_NONE;  // we want the back face as well
     rs.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
     rs.lineWidth = 1.0f;
-    pipelineInfo.pRasterizationState = &rs;
+    pipeline_info.pRasterizationState = &rs;
 
     VkPipelineMultisampleStateCreateInfo ms{};
     ms.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
-    // Enable multisampling.
-    ms.rasterizationSamples = window_.sampleCountFlagBits();
-    pipelineInfo.pMultisampleState = &ms;
+    // No multisampling.
+    ms.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
+    pipeline_info.pMultisampleState = &ms;
 
     VkPipelineDepthStencilStateCreateInfo ds;
     memset(&ds, 0, sizeof(ds));
@@ -277,18 +275,17 @@ void VulkanRenderer::CreateGraphicsPipeline(
     ds.depthTestEnable = VK_TRUE;
     ds.depthWriteEnable = VK_TRUE;
     ds.depthCompareOp = VK_COMPARE_OP_LESS_OR_EQUAL;
-    pipelineInfo.pDepthStencilState = &ds;
+    pipeline_info.pDepthStencilState = &ds;
 
-    VkPipelineColorBlendStateCreateInfo cb;
-    memset(&cb, 0, sizeof(cb));
+    // Write out all RGBA, no blending
+    VkPipelineColorBlendStateCreateInfo cb{};
     cb.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
-    // no blend, write out all of rgba
-    VkPipelineColorBlendAttachmentState att;
-    memset(&att, 0, sizeof(att));
-    att.colorWriteMask = 0xF;
+    VkPipelineColorBlendAttachmentState att{};
+    att.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT |
+                         VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
     cb.attachmentCount = 1;
     cb.pAttachments = &att;
-    pipelineInfo.pColorBlendState = &cb;
+    pipeline_info.pColorBlendState = &cb;
 
     const VkDynamicState dynamic_states[] = {VK_DYNAMIC_STATE_VIEWPORT,
                                              VK_DYNAMIC_STATE_SCISSOR};
@@ -298,21 +295,22 @@ void VulkanRenderer::CreateGraphicsPipeline(
     dynamic_state_info.dynamicStateCount =
         sizeof(dynamic_states) / sizeof(VkDynamicState);
     dynamic_state_info.pDynamicStates = dynamic_states;
-    pipelineInfo.pDynamicState = &dynamic_state_info;
+    pipeline_info.pDynamicState = &dynamic_state_info;
 
-    pipelineInfo.layout = pipeline_layout_;
-    pipelineInfo.renderPass = window_.defaultRenderPass();
+    pipeline_info.layout = pipeline_layout_;
+    pipeline_info.renderPass = window_.defaultRenderPass();
 
     err = device_functions_->vkCreateGraphicsPipelines(
-        device, pipeline_cache_, 1, &pipelineInfo, nullptr, &pipeline_);
+        device, pipeline_cache_, 1, &pipeline_info, nullptr, &pipeline_);
     if (err != VK_SUCCESS)
         qFatal("Failed to create graphics pipeline: %d", err);
 
-    if (vertShaderModule)
-        device_functions_->vkDestroyShaderModule(device, vertShaderModule,
+    // these are no longer needed, since they've been included in the pipeline
+    if (vertex_shader)
+        device_functions_->vkDestroyShaderModule(device, vertex_shader,
                                                  nullptr);
-    if (fragShaderModule)
-        device_functions_->vkDestroyShaderModule(device, fragShaderModule,
+    if (fragment_shader)
+        device_functions_->vkDestroyShaderModule(device, fragment_shader,
                                                  nullptr);
 }
 
