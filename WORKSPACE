@@ -26,13 +26,13 @@ new_git_repository(
 git_repository(
     name = "gtest",
     remote = "https://github.com/google/googletest",
-    tag = "release-1.10.0",
+    tag = "v1.14.0",
 )
 
 git_repository(
     name = "rules_vulkan",
     remote = "https://github.com/jadarve/rules_vulkan.git",
-    tag = "v0.0.6",
+    tag = "v0.0.11",
 )
 
 load("@rules_vulkan//vulkan:repositories.bzl", "vulkan_repositories")
